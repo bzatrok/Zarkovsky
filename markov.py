@@ -4,6 +4,7 @@
 import sys
 from pprint import pprint
 from random import choice
+
  
 EOS = ['.', '?', '!']
  
@@ -66,8 +67,12 @@ def main():
     success_count = 0
 
     results = []
+    word_count = 0
+    character_count = 0
 
-    while success_count < 30:
+    sentence_target = int(input("How many sentences would you like to generate? "))
+
+    while success_count < sentence_target:
         generated_sentences = generate_sentence(d)
         fail_count += 1
         is_substring_of_corpus = generated_sentences in text
@@ -78,29 +83,32 @@ def main():
             fail_count -= 1
             results.append(generated_sentences)
             print(str(success_count) + ": " + generated_sentences)
-        if fail_count > 5000:
-            print("Failcount hit 5000! Breaking!")
+        if fail_count > sentence_target * 100:
+            print("Failcount hit " + str(sentence_target * 100) + "! Breaking!")
             break
 
-    if success_count == 30:
+    if success_count == sentence_target:
 
         print("Writing results to output.txt")
 
-      
         with open('output.txt', 'wt') as target_file:
-            target_file.truncate()
+            # target_file.truncate()
 
             for line in results:
                 line_number = 1
-                target_file.write(line)
-                line_number += 1
+
                 if line_number % 3 == 0:
-                    target_file.write("\n")
+                    target_file.write(line + "\n")
+                    line_number += 1
+                else:
+                    target_file.write(line)
+                    line_number += 1
 
                 if line_number % 10 == 0:
-                    target_file.write()
+                    target_file.write("\n\n")
 
-            print("Writing done, closing file.")
+            print("Generated " + str(sentence_target) + " sentences. Closing file.")
+
             target_file.close()
 
 ####################
